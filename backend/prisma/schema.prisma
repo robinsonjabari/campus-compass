@@ -12,7 +12,7 @@ model Campus {
   name            String
   slug            String     @unique
   description     String?
-  emailDomain     String
+  emailDomain     String     @unique
   websiteUrl      String?
 
   primaryColor    String?

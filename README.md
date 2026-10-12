@@ -1,264 +1,361 @@
 # Campus Compass 🧭
 
-Campus Compass is a full-stack campus navigation platform designed to help students, faculty, and visitors find buildings and navigate university campuses more efficiently.
+Campus Compass is a full-stack campus navigation platform designed to help students, faculty, and visitors discover buildings, explore university campuses, and access location-specific information.
 
-The project is being built with a scalable, multi-campus architecture so that the platform can eventually support multiple universities rather than being limited to a single campus.
+Built with a multi-campus architecture, Campus Compass is designed to support multiple universities through a centralized platform while maintaining campus-specific users, buildings, and resources.
 
-> 🚧 **Project Status:** In active development. Core backend infrastructure, database integration, and authentication are implemented, with core application APIs currently under development.
+> 🚧 **Project Status:** Active Development — Core backend functionality, authentication, favorites, and administrative building management are implemented. Interactive map integration and frontend development are upcoming.
 
 ## Overview
 
-Navigating an unfamiliar university campus can be difficult, especially for new students and visitors trying to locate academic buildings, offices, and other campus resources.
+Navigating an unfamiliar university campus can be challenging, particularly for new students and visitors looking for academic buildings, administrative offices, and campus resources.
 
-Campus Compass aims to provide a centralized platform where users can:
+Campus Compass aims to simplify this experience through:
 
-* Search for campus buildings and locations
-* View detailed building information
-* Navigate an interactive campus map
-* Save frequently visited buildings as favorites
-* Access information specific to their university campus
+- Searchable campus building directories
+- Interactive campus maps and building markers
+- Detailed building information
+- Personalized favorite locations
+- University-specific user experiences
+- Campus administration and building management
 
-The application is designed with future multi-university support in mind, allowing individual campuses and their associated users, buildings, and data to be managed independently.
+The application is being developed with scalability, security, and maintainability in mind.
 
 ## Current Progress
 
-### Backend Foundation
+### Backend Infrastructure ✅
 
-* Node.js and Express backend architecture
-* TypeScript configuration
-* REST API structure
-* PostgreSQL database integration
-* Prisma ORM configuration and migrations
-* Environment-based configuration
-* CORS and JSON request handling
+- Node.js and Express REST API
+- TypeScript-based backend architecture
+- Modular routes, controllers, and middleware
+- PostgreSQL database hosted on Neon
+- Prisma ORM and database migrations
+- Environment-based configuration
+- CORS and JSON request handling
+- Campus, building, authentication, and favorites endpoints
 
-### Authentication
+### Authentication & Authorization ✅
 
-* User registration and login
-* Secure password hashing with bcrypt
-* JWT-based authentication
-* Authentication middleware for protected routes
-* Campus-aware user accounts
-* Role-based user architecture
+- User registration and login
+- bcrypt password hashing
+- JWT-based authentication
+- Protected API endpoints
+- University email-domain validation during registration
+- Campus-associated user accounts
+- Role-based administrative authorization
+- Campus ownership checks for building management
 
-### Database Architecture
+### Campus & Building Management ✅
 
-The current data model supports core entities including:
+- Campus data retrieval
+- Building directory API
+- Individual building retrieval
+- Admin-only building creation
+- Admin-only building updates
+- Admin-only building deletion
+- Campus-scoped administrative operations
 
-* **Campus** — represents an individual university campus
-* **User** — stores account, campus membership, and role information
-* **Building** — represents locations belonging to a campus
-* **Favorite** — connects users with saved buildings
+### Favorites System ✅
 
-The architecture uses UUID-based identifiers and relationships designed to support multiple campuses.
+- Retrieve authenticated user's favorites
+- Save buildings to favorites
+- Remove buildings from favorites
+- Prevent duplicate favorites
+- Return associated building information
 
-## Planned Features
+### Testing & Validation
 
-Campus Compass is actively being developed. Planned functionality includes:
+Core backend functionality has been manually tested using Thunder Client, including:
 
-* Interactive campus map
-* Searchable building directory
-* Building detail pages
-* Building categories
-* Favorites and saved locations
-* Campus-specific user experiences
-* Email verification
-* Administrative building management
-* Campus administration
-* Multi-university support
-* Responsive frontend interface
+- Successful registration and login
+- Protected route authentication
+- Student restrictions on administrative operations
+- Building creation, updates, and deletion
+- Favorites creation and removal
+- Missing-resource and duplicate-resource responses
+- TypeScript compilation checks
+
+Additional automated tests and cross-campus authorization testing are planned.
 
 ## Tech Stack
 
-### Frontend
+### Frontend (Planned)
 
-* React
-* TypeScript
+- React
+- TypeScript
+- Interactive mapping library (under evaluation)
 
 ### Backend
 
-* Node.js
-* Express
-* TypeScript
-* JWT
-* bcrypt
+- Node.js
+- Express.js
+- TypeScript
+- JWT
+- bcrypt
 
 ### Database
 
-* PostgreSQL
-* Prisma ORM
-* Neon
+- PostgreSQL
+- Prisma ORM
+- Neon
 
 ### Development Tools
 
-* Git
-* GitHub
-* npm
-* ts-node-dev
+- Git and GitHub
+- npm
+- tsx
+- VS Code
+- Thunder Client
 
 ## Architecture
 
-Campus Compass follows a full-stack architecture separating the client application, REST API, and persistence layer.
+Campus Compass separates frontend presentation, backend business logic, and database persistence.
 
 ```text
-React + TypeScript
-        │
-        ▼
-   REST API
-        │
-        ▼
-Node.js + Express
-        │
-        ▼
-    Prisma ORM
-        │
-        ▼
-PostgreSQL / Neon
+       React + TypeScript
+               |
+               v
+           REST API
+               |
+               v
+       Express.js Routes
+               |
+               v
+      Authentication &
+      Authorization
+               |
+               v
+       Controllers / Services
+               |
+               v
+           Prisma ORM
+               |
+               v
+       PostgreSQL (Neon)
 ```
 
-This separation allows the frontend and backend to evolve independently while keeping database access centralized through the API.
+This architecture allows the frontend and backend to evolve independently while maintaining centralized database access and consistent authorization rules.
+
+## Database Design
+
+The application currently uses four primary models:
+
+| Model | Responsibility |
+|---|---|
+| Campus | Stores university information and email-domain configuration |
+| User | Stores account information, roles, and campus membership |
+| Building | Stores campus locations and associated details |
+| Favorite | Associates users with saved buildings |
+
+The database uses UUID identifiers and relational associations.
+
+Each user belongs to a campus, and buildings are associated with their respective campuses.
 
 ## Authentication Flow
 
-Campus Compass uses token-based authentication.
-
 ```text
-User
-  │
-  ├── Register
-  │      │
-  │      ▼
-  │   Validate User
-  │      │
-  │      ▼
-  │   Hash Password
-  │      │
-  │      ▼
-  │   Store User
-  │
-  └── Login
-         │
-         ▼
-     Verify Credentials
-         │
-         ▼
-      Generate JWT
-         │
-         ▼
-     Authenticated Request
-         │
-         ▼
-     JWT Middleware
-         │
-         ▼
-      Protected Route
+User Registration
+       |
+       v
+Validate Input
+       |
+       v
+Verify University Email Domain
+       |
+       v
+Hash Password
+       |
+       v
+Create Campus-Associated User
+
+User Login
+       |
+       v
+Verify Credentials
+       |
+       v
+Generate JWT
+       |
+       v
+Authenticated API Request
+       |
+       v
+JWT Middleware
+       |
+       v
+Role Authorization (when required)
+       |
+       v
+Controller
 ```
 
-Passwords are stored as hashes rather than plaintext, and protected API endpoints use authentication middleware to verify JWTs before allowing access.
+Passwords are stored as hashes rather than plaintext. Protected endpoints require valid authentication tokens, while administrative endpoints additionally enforce role restrictions.
 
 ## User Roles
 
-The application is designed around several authorization levels:
+Campus Compass supports a role-based authorization architecture.
 
-* **Student** — standard campus user
-* **Staff** — university staff account
-* **Admin** — campus-level administrative access
-* **Super Admin** — platform-level administration
+- **Student:** Standard authenticated user with access to campus resources and personal favorites.
+- **Admin:** Campus-level administrator authorized to manage buildings associated with their campus.
+- **Super Admin:** Elevated administrative role intended for platform-level management.
 
-This role structure is intended to support future administrative functionality while maintaining separation between campuses. Endpoint-level authorization rules will be implemented as the corresponding application APIs are developed.
+Administrative building operations currently require an `admin` or `super_admin` role.
+
+Additional role-specific functionality and administrative interfaces are planned for future development.
+
+## API Overview
+
+Current REST API endpoints include:
+
+### Authentication
+
+```http
+POST /api/v1/auth/register
+POST /api/v1/auth/login
+```
+
+### Buildings
+
+```http
+GET    /api/v1/buildings
+GET    /api/v1/buildings/:id
+POST   /api/v1/buildings
+PATCH  /api/v1/buildings/:id
+DELETE /api/v1/buildings/:id
+```
+
+Building creation, modification, and deletion require administrative authorization.
+
+### Favorites
+
+```http
+GET    /api/v1/favorites
+POST   /api/v1/favorites
+DELETE /api/v1/favorites/:buildingId
+```
+
+Favorites endpoints require authentication and operate on the authenticated user's account.
+
+### Health Check
+
+```http
+GET /api/v1/health
+```
 
 ## Project Structure
 
 ```text
 campus-compass/
-│
+|
 ├── backend/
-│   └── src/
-│       ├── controllers/
-│       ├── middleware/
-│       ├── routes/
-│       ├── types/
-│       ├── app.ts
-│       └── server.ts
-│
+│   ├── prisma/
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── types/
+│   │   ├── app.ts
+│   │   └── server.ts
+│   ├── package.json
+│   └── tsconfig.json
+|
+├── frontend/
+|
 ├── docs/
-│
+|
 └── README.md
 ```
 
-The `docs` directory contains project planning and technical documentation used during development.
+The `docs` directory contains product requirements, database design, API specifications, and wireframes.
 
-## Development Approach
+## Development Workflow
 
-Campus Compass is being developed using a feature-based Git workflow. Major functionality is implemented on dedicated branches, reviewed, and merged into the main branch through pull requests.
+Campus Compass follows a feature-based Git workflow.
 
-Project development began with technical planning and documentation, including:
+Each major feature is developed on a dedicated branch, tested, and integrated into the main branch through GitHub pull requests.
 
-* Product requirements
-* Database design
-* API specification
-* Application wireframes
-* Backend architecture
+Development emphasizes:
 
-This documentation-first approach helps maintain consistency as the application grows.
+- Incremental feature implementation
+- Separation of concerns
+- Type-safe development
+- API testing
+- Authentication and authorization
+- Maintainable project structure
+- Documentation-driven planning
 
-## Roadmap
+## Development Roadmap
 
-### Phase 1 — Foundation
+### Phase 1 — Planning & Foundation
 
-* [x] Define product requirements
-* [x] Design database architecture
-* [x] Define API structure
-* [x] Configure backend environment
-* [x] Connect PostgreSQL with Prisma
-* [x] Implement authentication foundation
-* [x] Implement JWT authentication middleware
+- [x] Define product requirements
+- [x] Design database architecture
+- [x] Define REST API structure
+- [x] Create application wireframes
+- [x] Configure backend environment
+- [x] Integrate PostgreSQL and Prisma
+- [x] Establish modular backend architecture
 
 ### Phase 2 — Core Backend
 
-* [ ] Campus endpoints
-* [ ] Building endpoints
-* [ ] Building search and filtering
-* [ ] Favorites API
-* [ ] Role-based endpoint authorization
-* [ ] Additional validation and error handling
+- [x] Implement campus resource API
+- [x] Implement building resource API
+- [x] Implement user registration and login
+- [x] Implement JWT authentication
+- [x] Implement favorites API
+- [x] Implement role-based admin authorization
+- [x] Implement admin building CRUD operations
+- [ ] Add building search and filtering
+- [ ] Expand input validation and error handling
+- [ ] Add automated API tests
 
-### Phase 3 — Frontend
+### Phase 3 — Interactive Map Integration
 
-* [ ] React application foundation
-* [ ] Authentication interface
-* [ ] Campus dashboard
-* [ ] Building directory
-* [ ] Building detail pages
-* [ ] Favorites interface
+- [ ] Select and integrate mapping library
+- [ ] Display campus map
+- [ ] Render building markers using database coordinates
+- [ ] Display building details through map interactions
+- [ ] Filter map data by campus
+- [ ] Implement location search
+- [ ] Add navigation and walking directions
 
-### Phase 4 — Navigation
+### Phase 4 — Frontend Application
 
-* [ ] Interactive campus map
-* [ ] Building markers
-* [ ] Location search
-* [ ] Navigation functionality
+- [ ] Build React application foundation
+- [ ] Implement authentication interface
+- [ ] Create campus dashboard
+- [ ] Build searchable building directory
+- [ ] Create building detail views
+- [ ] Implement favorites interface
+- [ ] Build administrative dashboard UI
+- [ ] Implement responsive layouts
 
-### Phase 5 — Expansion
+### Phase 5 — Expansion & Deployment
 
-* [ ] Administrative tools
-* [ ] Multi-campus onboarding
-* [ ] Production deployment
-* [ ] Performance and accessibility improvements
+- [ ] Implement email verification
+- [ ] Expand campus administration
+- [ ] Support multi-university onboarding
+- [ ] Add accessibility improvements
+- [ ] Improve performance and security
+- [ ] Deploy production application
 
-## Goals
+## Project Goals
 
-Campus Compass is both a practical software engineering project and an exploration of designing a full-stack application for long-term scalability.
+Campus Compass serves as both a practical campus navigation solution and a portfolio project demonstrating real-world software engineering principles.
 
-The project focuses on applying concepts including:
+Key technical objectives include:
 
-* REST API design
-* Relational database modeling
-* Authentication and authorization
-* Full-stack application architecture
-* Type-safe development
-* Version control workflows
-* Scalable system design
+- RESTful API design
+- Relational database modeling
+- Authentication and authorization
+- Multi-campus data organization
+- Secure administrative operations
+- Full-stack application development
+- TypeScript and modular architecture
+- Collaborative Git workflows
+- Scalable application design
 
 ---
 

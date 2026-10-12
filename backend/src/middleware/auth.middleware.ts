@@ -24,34 +24,51 @@ export const authenticateToken = (
     return;
   }
 
-   try {
-  const decoded = jwt.verify(
-    token,
-    process.env.JWT_SECRET as string
-  );
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    );
 
-  if (
-    typeof decoded !== "object" ||
-    !decoded.userId ||
-    !decoded.campusId ||
-    !decoded.role
-  ) {
+    if (
+      typeof decoded !== "object" ||
+      !decoded.userId ||
+      !decoded.campusId ||
+      !decoded.role
+    ) {
+      res.status(401).json({
+        message: "Invalid token payload",
+      });
+      return;
+    }
+
+    req.user = {
+      userId: decoded.userId,
+      campusId: decoded.campusId,
+      role: decoded.role,
+    };
+
+    next();
+  } catch {
     res.status(401).json({
-      message: "Invalid token payload",
+      message: "Invalid or expired token",
+    });
+  }
+};
+
+export const requireAdmin = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  const role = req.user?.role;
+
+  if (role !== "admin" && role !== "super_admin") {
+    res.status(403).json({
+      message: "Admin access required",
     });
     return;
   }
 
-  req.user = {
-    userId: decoded.userId,
-    campusId: decoded.campusId,
-    role: decoded.role,
-  };
-
   next();
-} catch {
-  res.status(401).json({
-    message: "Invalid or expired token",
-  });
-}
 };
